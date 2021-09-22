@@ -1,0 +1,153 @@
+import hashlib as hl
+import os
+import time
+
+                ############################ clear the cmd ############################
+
+def clearscr():
+    os.system('clear')
+
+
+        ############ confirming a user new or old then start the process accorrdingly ##################
+
+
+def create_acount_confirmation():
+    while True:
+        acount_holder=input("If new , press y to create an acount else press n: ").upper()
+        if acount_holder=="Y":
+            clearscr()
+            new_user_name = input("Username : ")
+            new_user_password=input("Enter your passsword : ")
+            if new_user_name and new_user_name not in acount_amount.keys():
+                create_acount(new_user_name,new_user_password,50)
+                print("Your Acount has been created...")
+                time.sleep(5)
+                clearscr()
+                transaction_proceeding()
+            elif new_user_name in acount_amount.keys():
+                print("Username already exists")
+                time.sleep(3)
+                clearscr()
+                continue
+            else:
+                clearscr()
+                continue
+                
+        elif acount_holder!='Y' and acount_holder!='N':
+            print('Enter the valid information to proceed...')
+            time.sleep(5)
+            clearscr()
+            continue
+
+        elif acount_holder=='N':
+            clearscr()
+            transaction_proceeding()     
+
+                
+
+                ############################  create acount ############################
+
+
+def create_acount(new_user_name,password,deposit_amount):
+    acount_amount[new_user_name]=int(deposit_amount)
+    password_database[new_user_name]=str(password)
+
+
+
+      ##################### user have the acount and can start the transaction ######################
+
+
+def transaction_proceeding():
+    while True:
+            c=0
+            username=input("Registered Username : ")
+            receiver=input("Registered receiver's name : ")
+            amount=int(input("Amount to transact : "))
+            password=input("Enter the password : ")
+            
+            if username and username in acount_amount.keys():
+                if password  and password in password_database.values():
+                    if password_database[username]==password:
+                        if amount and username in acount_amount.keys() and receiver in acount_amount.keys() and  amount<=acount_amount.get(username):
+                            print('Transaction will be Done after few steps...')
+                            print()
+                            c=1
+                            time.sleep(2)
+                        elif username in acount_amount.keys() and amount>acount_amount.get(username):
+                            print('Inufficient Balance for transaction')
+                            time.sleep(5)
+                            clearscr()
+                        elif username not in acount_amount.keys() or receiver not in acount_amount.keys():
+                            print('Enter a Valid Username or receiver name')
+                            time.sleep(5)
+                            clearscr()
+                        else:
+                            clearscr()
+                            continue
+                    else:
+                        print('Enter correct password')
+                        time.sleep(5)
+                        clearscr()
+                elif password  and password not in password_database.values():
+                    print('Enter correct password')
+                    time.sleep(5)
+                    clearscr()
+                else:
+                    clearscr()
+                    continue
+            elif username not in acount_amount.keys() or receiver not in acount_amount.keys():
+                print('Enter a Valid Username/receiver name')
+                time.sleep(5)
+                clearscr()
+                create_acount_confirmation()
+            else:
+                clearscr()
+                continue
+
+                                # transaction starts here after confirmation
+
+            if c==1:
+                confirmation=input("Please type y/n for confirmation of transaction : ").upper()
+                if confirmation=='Y':
+                    acount_amount[receiver]=acount_amount.get(receiver)+amount
+                    print("Transaction Successfull..")
+                    acount_amount[username]=acount_amount.get(username)-amount
+                    print("Your Available balance : ",acount_amount.get(username))
+                    # print("Receivers Available balance : ",acount_amount.get(receiver))
+                    hashing_block(username,amount,receiver)
+                    print(hased_transaction_database)
+                    time.sleep(5)
+                    clearscr()
+                    
+                else:
+                    amount,c=0,0
+                    username=""            
+                    print("Transaction cancelled...")
+                    time.sleep(5)
+                    clearscr()
+                    continue
+
+
+
+   ########################################   H A S H I N G  ############################################
+
+def hashing_block(sender,price,receiver_person):
+    transaction_data=str(sender)+" gave "+str(price)+" coins to "+str(receiver_person)
+    hased_current=hl.sha256(transaction_data.encode()).hexdigest()
+    hased_transaction_database.append(hased_current)
+    position=len(hased_transaction_database)-1
+    hased_prev_cur=hl.sha256((hased_transaction_database[position-1]+transaction_data).encode()).hexdigest()
+    hased_transaction_database[position]=hased_prev_cur
+
+
+######################### starting  starting    starting    starting    starting ############################
+
+
+clearscr()
+acount_amount={"ashu":500,"uma":800}
+password_database={"ashu":'1234',"uma":'suraj'}
+hased_transaction_database=[]
+
+                    ##########################  function calling  ######################### 
+
+create_acount_confirmation()
